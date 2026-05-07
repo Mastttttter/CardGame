@@ -1,0 +1,103 @@
+# OS files
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.user
+*.suo
+*.tmp
+
+# CMake and native build output
+build/
+Build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+Testing/
+*.ninja
+.ninja_deps
+.ninja_log
+
+# Object files and debug symbols
+*.o
+*.obj
+*.d
+*.pch
+*.pdb
+*.ilk
+*.idb
+*.ipch
+*.map
+
+# Runtime and package artifacts
+bin/
+obj/
+Debug/
+Release/
+*.log
+*.apk
+*.apks
+*.ipa
+*.app
+*.dSYM/
+*.xcarchive
+
+# Android / Gradle
+.gradle/
+proj.android/.cxx/
+proj.android/.externalNativeBuild/
+proj.android/.gradle/
+proj.android/build/
+proj.android/app/.cxx/
+proj.android/app/.externalNativeBuild/
+proj.android/app/build/
+proj.android/captures/
+proj.android/local.properties
+proj.android/*.iml
+proj.android/app/*.iml
+*.keystore
+*.jks
+
+# Xcode / iOS / macOS
+proj.ios_mac/build/
+proj.ios_mac/DerivedData/
+proj.ios_mac/*.xcworkspace/xcuserdata/
+proj.ios_mac/*.xcodeproj/xcuserdata/
+proj.ios_mac/*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcuserstate
+*.xcuserdata/
+*.xcscmblueprint
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.pbxuser
+
+# Visual Studio / Windows
+proj.win32/.vs/
+proj.win32/ipch/
+proj.win32/[Dd]ebug*/
+proj.win32/[Rr]elease*/
+proj.win32/x64/
+proj.win32/Win32/
+proj.win32/*.opensdf
+proj.win32/*.sdf
+proj.win32/*.VC.db
+proj.win32/*.VC.VC.opendb
+
+# Cocos generated files
+.publish/
+publish/
+temp/
+runtime/
+simulator/
