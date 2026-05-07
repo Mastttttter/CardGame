@@ -56,10 +56,16 @@ include_directories(
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp
      Classes/HelloWorldScene.cpp
+     Classes/configs/loaders/LevelConfigLoader.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
      Classes/HelloWorldScene.h
+     Classes/configs/models/CardTypes.h
+     Classes/configs/models/CardConfig.h
+     Classes/configs/models/CardResConfig.h
+     Classes/configs/models/LevelConfig.h
+     Classes/configs/loaders/LevelConfigLoader.h
      )
 
 if(ANDROID)
