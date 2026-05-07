@@ -19,6 +19,7 @@ Desktop.ini
 # CMake and native build output
 build/
 Build/
+linux-build/
 cmake-build-*/
 CMakeFiles/
 CMakeCache.txt

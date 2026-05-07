@@ -1,95 +1,70 @@
 #include "configs/loaders/LevelConfigLoader.h"
+#include <sstream>
+#include "base/CCConsole.h"
 #include "cocos2d.h"
+#include "configs/loaders/CardConfigParserRegistry.h"
 #include "json/document.h"
-#include "physics/CCPhysicsHelper.h"
-
-USING_NS_CC;
 
 // the helper fundtions used by this .cpp file, no recommand for other usage
 namespace details {
-/**
- * @brief parse the Card config from json block
- * the json block should be
- * {
- *             "CardFace": 12,
- *             "CardSuit": 0,
- *             "Position": {"x": 250, "y": 1000}
- *         },
- * @param value card json blodk
- * @return CardConfig, if the json is invalid, it will return the default object
- */
-CardConfig parseCardConfig(rapidjson::Value const &value) {
-  CardConfig config;
-  if (!value.IsObject()) {
-    return config;
+inline void setError(std::string const &message, std::string *error) {
+  if (error) {
+    *error = message;
   }
-  if (value.HasMember("CardFace") && value["CardFace"].IsInt()) {
-    config.face = static_cast<CardFaceType>(value["CardFace"].GetInt());
-  }
-  if (value.HasMember("CardSuit") && value["CardSuit"].IsInt()) {
-    config.suit = static_cast<CardSuitType>(value["CardSuit"].GetInt());
-  }
-  if (value.HasMember("Position") && value["Position"].IsObject()) {
-    auto const &position = value["Position"];
-    if (position.HasMember("x") && position.HasMember("y") &&
-        position["x"].IsNumber() && position["y"].IsNumber()) {
-      config.position =
-          Vec2(position["x"].GetFloat(), position["y"].GetFloat());
-    }
-  }
-  return config;
 }
 
-/**
- * @brief load the card array from json block
- *   the json block should be
- *   {
- *   "<arrayName>": [
- *         {
- *             "CardFace": 12,
- *             "CardSuit": 0,
- *             "Position": {"x": 250, "y": 1000}
- *         },
- *       ...
- *       ],
- *    }
- * @param document cards json block
- *         arrayName the name of the list of cards
- * @return std::vector<CardConfig> the CardConfig array or empty if the json
- * block is invalid
- */
-std::vector<CardConfig> loadCardArray(rapidjson::Document const &document,
-                                      std::string const &arrayName) {
-  std::vector<CardConfig> cardArray;
-  if (!document.HasMember(arrayName.c_str()) ||
-      !document[arrayName.c_str()].IsArray()) {
-    return cardArray;
+bool parseCardArray(rapidjson::Value const &root, char const *key,
+                    bool playfield, CardConfigParserRegistry const &registry,
+                    std::vector<CardConfig> *cards, std::string *error) {
+  if (!root.HasMember(key) || !root[key].IsArray()) {
+    std::ostringstream stream;
+    stream << "Level config requires array" << key << ".";
+    setError(stream.str(), error);
+    return false;
   }
-  auto const &jsonArray = document[arrayName.c_str()];
-  for (rapidjson::SizeType i = 0; i < jsonArray.Size(); ++i) {
-    cardArray.emplace_back(parseCardConfig(jsonArray[i]));
+  rapidjson::Value const &array = root[key];
+  for (rapidjson::SizeType index = 0; index < array.Size(); ++index) {
+    CardConfig card;
+    std::string cardError;
+    if (!registry.parseCard(array[index], &card, &cardError)) {
+      std::ostringstream stream;
+      stream << key << "[" << index << "]:" << cardError;
+      setError(stream.str(), error);
+      return false;
+    }
+    card.playfieldOrder = playfield ? static_cast<int>(index) : -1;
+    cards->push_back(card);
   }
-  return cardArray;
+  cocos2d::log("Parsing %s success", key);
+  return true;
 }
 }  // namespace details
 
-LevelConfig LevelConfigLoader::loadLevelConfig(int levelId) {
-  LevelConfig levelConfig;
-  std::stringstream path;
-  path << "configs/level_" << levelId << ".json";
-  std::string const content =
-      FileUtils::getInstance()->getStringFromFile(path.str());
-  if (content.empty()) {
-    CCLOG("Failed to load level config: %s", path.str().c_str());
-    return levelConfig;
+bool LevelConfigLoader::load(std::string const &path, LevelConfig *level,
+                             std::string *error) const {
+  cocos2d::log("loading level %s ", path.c_str());
+  auto json = cocos2d::FileUtils::getInstance()->getStringFromFile(path);
+  if (json.empty()) {
+    details::setError("failed to read level config: " + path, error);
+    return false;
   }
   rapidjson::Document document;
-  document.Parse<0>(content.c_str());
+  document.Parse<0>(json.c_str());
   if (document.HasParseError() || !document.IsObject()) {
-    CCLOG("Failed to parse level config: %s", path.str().c_str());
-    return levelConfig;
+    details::setError("Level config invalid" + path, error);
+    return false;
   }
-  levelConfig.playfieldCards = details::loadCardArray(document, "Playfield");
-  levelConfig.stackCards = details::loadCardArray(document, "Stac");
-  return levelConfig;
+  LevelConfig parsed;
+  CardConfigParserRegistry registry;
+  if (!details::parseCardArray(document, "Playfield", true, registry,
+                               &parsed.playfieldCards, error)) {
+    return false;
+  }
+  if (!details::parseCardArray(document, "Stack", false, registry,
+                               &parsed.playfieldCards, error)) {
+    return false;
+  }
+  *level = parsed;
+  cocos2d::log("load level %s success", path.c_str());
+  return true;
 }

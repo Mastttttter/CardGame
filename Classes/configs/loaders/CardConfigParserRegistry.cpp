@@ -3,7 +3,7 @@
 #include "rapidxml/rapidxml.hpp"
 
 namespace details {
-void setError(std::string const &message, std::string *error) {
+inline void setError(std::string const &message, std::string *error) {
   if (error) {
     *error = message;
   }
@@ -23,8 +23,8 @@ bool parseDefaultCard(rapidjson::Value const &value, CardConfig *card,
     setError("Card entry must be a JSON object", error);
     return false;
   }
-  if (!hasIntMember(value, "Cardface")) {
-    setError("Default card requires inteager CardFace.", error);
+  if (!hasIntMember(value, "CardFace")) {
+    setError("Default card requires integer CardFace.", error);
     return false;
   }
   if (!hasIntMember(value, "CardSuit")) {
@@ -55,6 +55,9 @@ bool parseDefaultCard(rapidjson::Value const &value, CardConfig *card,
   card->suit = suit;
   card->position = cocos2d::Vec2(static_cast<float>(position["x"].GetDouble()),
                                  static_cast<float>(position["y"].GetDouble()));
+  cocos2d::log("Parse Success, tyep: %d,face:%d,suit: %d, position: %d %d.",
+               card->type, card->face, card->suit, card->position.x,
+               card->position.y);
   return true;
 }
 
