@@ -1,22 +1,22 @@
 #pragma once
 
-#include <cocos2d.h>
-#include "configs/models/CardTypes.h"
+#include "CardTypes.h"
+#include "cocos2d.h"
 
-/**
- * @brief store card data
- */
-class CardConfig {
-  public:
-  CardConfig()
-      : face(CFT_NONE),
-        suit(CST_NONE),
-        position(cocos2d::Vec2::ZERO) {}
+/** Static card data loaded from a level config file. */
+struct CardConfig {
+  /** Card behavior type declared by the level data. */
+  CardType type = CardType::Default;
 
-  // face type of a card
-  CardFaceType face;
-  // suit type of a card
-  CardSuitType suit;
-  // the position of a card
+  /** Card face where 0 is ace and 12 is king. */
+  int face = 0;
+
+  /** Card suit where 0 club, 1 diamond, 2 heart, and 3 spade. */
+  int suit = 0;
+
+  /** Design-space center position from the level config. */
   cocos2d::Vec2 position;
+
+  /** Original playfield order, or -1 for stack cards. */
+  int playfieldOrder = -1;
 };

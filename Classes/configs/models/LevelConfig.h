@@ -1,15 +1,13 @@
 #pragma once
 
 #include <vector>
-#include "configs/models/CardConfig.h"
+#include "CardConfig.h"
 
-/**
- * @brief store level data
- */
-class LevelConfig {
-  public:
-  // cards in playfield
+/** Static level data loaded from a JSON level file. */
+struct LevelConfig {
+  /** Cards rendered in playfield order. */
   std::vector<CardConfig> playfieldCards;
-  // cards in stack field
+
+  /** Stack cards where index 0 is the initial tray/top card. */
   std::vector<CardConfig> stackCards;
 };

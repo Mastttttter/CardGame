@@ -1,17 +1,12 @@
 #pragma once
 
+#include <string>
 #include "configs/models/LevelConfig.h"
 
-/**
- * @brief load level config data from .json resources
- */
+/** Loads static level configuration through Cocos resource paths. */
 class LevelConfigLoader {
   public:
-  /**
-   * @brief loads Resources/configs/level_<id>.json
-   * @pragma levelId the id if the level
-   * @return LevelConfig the LevelConfig object after parsing or default object
-   * if pase failed
-   */
-  static LevelConfig loadLevelConfig(int levelId);
+  /** Loads a level JSON file into a LevelConfig. */
+  bool load(std::string const &path, LevelConfig *level,
+            std::string *error) const;
 };
