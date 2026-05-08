@@ -5,9 +5,10 @@
 
 GameModel::GameModel() : _trayCardId(INVALID_CARD_ID), _nextCardId(0) {}
 
-CardId GameModel::addCard(std::shared_ptr<CardModelBase> const cardModel,
+CardId GameModel::addCard(std::shared_ptr<CardModelBase> cardModel,
                           CardZone zone, int playfieldOrder) {
   CardId const cardId = _nextCardId++;
+  cardModel->setId(cardId);
   cardModel->setZone(zone);
   cardModel->setPlayfieldOrder(playfieldOrder);
   _cards.push_back(cardModel);

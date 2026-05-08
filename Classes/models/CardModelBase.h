@@ -6,14 +6,18 @@
 class CardModelBase {
   public:
   /** Creates a runtime card from static card configuration. */
-  CardModelBase(CardId id, std::shared_ptr<CardConfigBase> const &config,
-                CardZone zone, int playfieldOrder)
-      : _id(id),
+  CardModelBase(std::shared_ptr<CardConfigBase> config)
+      : _id(-1),
         _config(config),
-        _zone(zone),
-        _playfieldOrder(playfieldOrder),
+        _zone(),
+        _playfieldOrder(-1),
         _originalPosition(config->position),
-        _currentPosition(config->position) {}
+        _currentPosition(config->position) {
+    CCLOG("Success: generate a model of position :%f, %f", _originalPosition.x,
+          _originalPosition.y);
+  }
+
+  using Super = CardModelBase;
 
   virtual ~CardModelBase() = default;
 
@@ -22,8 +26,12 @@ class CardModelBase {
     return _id;
   }
 
+  void setId(CardId id) {
+    _id = id;
+  }
+
   /** Returns the static source configuration for this card. */
-  std::shared_ptr<CardConfigBase> const &getConfig() const {
+  std::shared_ptr<CardConfigBase> getConfig() const {
     return _config;
   }
 

@@ -11,6 +11,8 @@ class GameController;
 /** Extension seam for type-specific card actions. */
 class CardControllerBase {
   public:
+  using Super = CardControllerBase;
+
   CardControllerBase(GameController *controller)
       : _gameController(controller) {}
 
@@ -22,7 +24,7 @@ class CardControllerBase {
 
   virtual std::shared_ptr<CardModelBase> generateCardModelFromConfig(
       std::shared_ptr<CardConfigBase> cardConfig) = 0;
-  virtual void handleCardClick(CardId cardId) = 0;
+  virtual void handleCardClick(CardId cardId) {};
 
   GameController *getGameController() {
     return _gameController;

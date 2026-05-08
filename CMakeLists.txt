@@ -59,8 +59,12 @@ list(APPEND GAME_SOURCE
      Classes/configs/loaders/CardConfigParserRegistry.cpp
      Classes/configs/loaders/LevelConfigLoader.cpp
      Classes/configs/LayoutConfig.cpp
+     Classes/controllers/CardControllerDefault.cpp
      Classes/controllers/GameController.cpp
      Classes/models/GameModel.cpp
+     Classes/utils/CardAssetUtils.cpp
+     Classes/views/CardViewBase.cpp
+     Classes/views/CardViewDefault.cpp
      Classes/views/GameScene.cpp
      Classes/views/GameView.cpp
      )

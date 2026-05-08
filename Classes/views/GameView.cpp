@@ -1,4 +1,5 @@
 #include "views/GameView.h"
+#include "CCPlatformMacros.h"
 #include "configs/LayoutConfig.h"
 #include "controllers/GameController.h"
 
@@ -80,10 +81,13 @@ void GameView::setUndoClickCallback(std::function<void()> const &callback) {
   _undoClickCallback = callback;
 }
 
-GameController *GameView::setGameController(GameController *controller) {
+void GameView::setGameController(GameController *controller) {
   _gameController = controller;
 }
 
 GameController *GameView::getGameController() const {
+  if (!_gameController) {
+    CCLOG("Warning: try to get null GameController");
+  }
   return _gameController;
 }

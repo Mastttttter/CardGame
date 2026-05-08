@@ -29,7 +29,7 @@ class GameView : public cocos2d::Node {
   /** Registers the undo button click callback. */
   void setUndoClickCallback(std::function<void()> const &callback);
 
-  GameController *setGameController(GameController *);
+  void setGameController(GameController *);
   GameController *getGameController() const;
 
   private:

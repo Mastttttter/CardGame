@@ -7,6 +7,7 @@
 /** Cocos node that displays one default playing card. */
 class CardViewBase : public cocos2d::Node {
   public:
+  using Super = CardViewBase;
   virtual ~CardViewBase() = default;
   /** Initializes the card node and touch listener. */
   virtual bool init() override;
