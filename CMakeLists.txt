@@ -61,12 +61,15 @@ list(APPEND GAME_SOURCE
      Classes/configs/LayoutConfig.cpp
      Classes/controllers/CardControllerDefault.cpp
      Classes/controllers/GameController.cpp
+     Classes/managers/CardManager.cpp
      Classes/models/GameModel.cpp
      Classes/utils/CardAssetUtils.cpp
+     Classes/utils/GeometryUtils.cpp
      Classes/views/CardViewBase.cpp
      Classes/views/CardViewDefault.cpp
      Classes/views/GameScene.cpp
      Classes/views/GameView.cpp
+     Classes/views/ReservePileView.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h

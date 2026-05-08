@@ -5,6 +5,7 @@
 #include "CardControllerBase.h"
 #include "configs/loaders/LevelConfigLoader.h"
 #include "configs/models/CardTypes.h"
+#include "managers/CardManager.h"
 #include "models/GameModel.h"
 #include "views/GameView.h"
 
@@ -22,11 +23,17 @@ class GameController {
 
   bool initGameModel();
 
+  void postInitGameModel();
+
   void registerCardController();
 
   std::shared_ptr<CardControllerBase> getCardControllerOfId(CardId id);
 
   std::shared_ptr<CardControllerBase> getCardControllerOfType(CardType type);
+
+  CardManager const &getCardManager() const {
+    return _cardManager;
+  }
 
   private:
   void handleCardClick(CardId cardId);
@@ -38,4 +45,5 @@ class GameController {
       _cardTypeControllers;
   GameView *_view;
   bool _started;
+  CardManager _cardManager;
 };

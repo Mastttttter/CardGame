@@ -1,9 +1,11 @@
 #include "GameController.h"
 #include "CardControllerDefault.h"
+#include "configs/LayoutConfig.h"
 #include "configs/loaders/LevelConfigLoader.h"
 #include "configs/models/CardResConfig.h"
 #include "configs/models/CardTypes.h"
 #include "editor-support/cocosbuilder/CCControlLoader.h"
+#include "utils/GeometryUtils.h"
 
 GameController::GameController(GameView *view) : _view(view), _started(false) {
   _view->setGameController(this);
@@ -22,6 +24,7 @@ bool GameController::start() {
     return false;
   }
   CCLOG("Success: initial game model");
+  postInitGameModel();
 
   _view->setCardClickCallback(
       [this](CardId cardId) { handleCardClick(cardId); });
@@ -125,4 +128,27 @@ void GameController::handleCardClick(CardId cardId) {
   controller->second->handleCardClick(cardId);
 
   // TODO undo logic in game controller
+}
+
+void GameController::postInitGameModel() {
+  auto cards = _model->getPlayfieldCardIds();
+  for (int i = 0; i < cards.size(); ++i) {
+    for (int j = 0; j < i; ++j) {
+      auto cardA = _model->findCard(cards[i]);
+      auto cardB = _model->findCard(cards[j]);
+      auto rectA = GeometryUtils::centeredRect(cardA->getPosition(),
+                                               LayoutConfig::cardSize());
+      auto rectB = GeometryUtils::centeredRect(cardB->getPosition(),
+                                               LayoutConfig::cardSize());
+      if (GeometryUtils::overlapsWithPositiveArea(rectA, rectB)) {
+        if (cardA->getPlayfieldOrder() > cardB->getPlayfieldOrder()) {
+          _cardManager.addConnection(cards[i], cards[j]);
+        } else {
+          _cardManager.addConnection(cards[j], cards[i]);
+        }
+      }
+    }
+  }
+  _cardManager.constructGraph();
+  CCLOG("Success: construct card graph");
 }

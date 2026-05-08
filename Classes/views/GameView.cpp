@@ -2,6 +2,7 @@
 #include "CCPlatformMacros.h"
 #include "configs/LayoutConfig.h"
 #include "controllers/GameController.h"
+#include "ReservePileView.h"
 
 bool GameView::init() {
   if (!cocos2d::Node::init()) {
@@ -16,7 +17,16 @@ bool GameView::init() {
     addChild(background, -100);
   }
 
-  // TODO create _reservePileView
+  _reservePileView = ReservePileView::create();
+  if (_reservePileView) {
+    _reservePileView->setPosition(LayoutConfig::reservePilePosition());
+    _reservePileView->setClickCallback([this]() {
+      if (_inputEnabled && _reserveClickCallback) {
+        _reserveClickCallback();
+      }
+    });
+    addChild(_reservePileView, 900);
+  }
 
   auto undoLabel =
       cocos2d::Label::createWithTTF("Undo", "fonts/arial.ttf", 46.0f);

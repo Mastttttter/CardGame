@@ -8,6 +8,7 @@
 #include "models/GameModel.h"
 
 class GameController;
+class ReservePileView;
 
 /** Root Cocos UI node for cards, reserve pile, and undo control. */
 class GameView : public cocos2d::Node {
@@ -45,4 +46,5 @@ class GameView : public cocos2d::Node {
   std::function<void()> _reserveClickCallback;
   std::function<void()> _undoClickCallback;
   GameController *_gameController;
+  ReservePileView *_reservePileView;
 };
