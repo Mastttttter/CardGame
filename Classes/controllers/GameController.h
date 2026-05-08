@@ -12,7 +12,8 @@
 #include "views/GameView.h"
 
 /**
- * @brief Wires the game model, view, managers, stack controller, and card controllers.
+ * @brief Wires the game model, view, managers, stack controller, and card
+ * controllers.
  */
 class GameController {
   public:
@@ -29,7 +30,8 @@ class GameController {
   ~GameController();
 
   /**
-   * @brief Loads the initial level, builds dependencies, and binds view callbacks.
+   * @brief Loads the initial level, builds dependencies, and binds view
+   * callbacks.
    *
    * @return True when startup reaches an interactive state.
    */
@@ -43,12 +45,14 @@ class GameController {
   bool initGameModel();
 
   /**
-   * @brief Builds post-load playfield dependency state used for top-card checks.
+   * @brief Builds post-load playfield dependency state used for top-card
+   * checks.
    */
   void postInitGameModel();
 
   /**
-   * @brief Registers card-type controllers used by the level loader and actions.
+   * @brief Registers card-type controllers used by the level loader and
+   * actions.
    */
   void registerCardController();
 
@@ -65,7 +69,8 @@ class GameController {
    * @brief Returns the card controller for a runtime card id.
    *
    * @param id Runtime card id to resolve.
-   * @return Matching card controller, or nullptr when the id cannot be resolved.
+   * @return Matching card controller, or nullptr when the id cannot be
+   * resolved.
    */
   std::shared_ptr<CardControllerBase> getCardControllerOfId(CardId id);
 
@@ -73,7 +78,8 @@ class GameController {
    * @brief Returns the card controller registered for a card type.
    *
    * @param type Card type to resolve.
-   * @return Matching card controller, or nullptr when the type is not registered.
+   * @return Matching card controller, or nullptr when the type is not
+   * registered.
    */
   std::shared_ptr<CardControllerBase> getCardControllerOfType(CardType type);
 
@@ -82,7 +88,7 @@ class GameController {
    *
    * @return Read-only card manager reference.
    */
-  CardManager const &getCardManager() const {
+  CardManager &getCardManager() {
     return _cardManager;
   }
 

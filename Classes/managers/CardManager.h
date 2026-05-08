@@ -14,7 +14,7 @@ class CardManager {
    * @brief Returns whether a playfield card has no covering cards above it.
    *
    * @param id Runtime card id to inspect.
-   * @return True when the card is tracked and currently uncovered.
+   * @return True when the card is untracked and currently uncovered.
    */
   bool isOnTop(CardId id) const;
 

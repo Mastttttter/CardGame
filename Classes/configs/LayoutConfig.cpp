@@ -30,5 +30,5 @@ cocos2d::Color4B LayoutConfig::backgroundColor() {
 }
 
 float LayoutConfig::playfieldOffsetFromBottom() {
-  return 600.f;
+  return 200.f;
 }

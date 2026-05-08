@@ -187,8 +187,6 @@ void GameController::_handleCardClick(CardId cardId) {
     }
     CCLOG("info: create an operation");
     _undoManager.push(std::move(operation));
-
-    _undoManager.push(std::move(operation));
     _view->setInputEnabled(false);
     _view->animateCardToPosition(cardId, LayoutConfig::trayPosition(),
                                  [this]() {

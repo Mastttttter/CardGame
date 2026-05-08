@@ -3,7 +3,7 @@
 #include "configs/models/CardTypes.h"
 #include "models/GameModel.h"
 
-namespace {
+namespace details {
 
 /**
  * @brief Undo operation that returns a drawn reserve card to reserve state.
@@ -66,7 +66,7 @@ class ReserveDrawUndoOperation : public UndoOperation {
   cocos2d::Vec2 _reservePosition;
 };
 
-}  // namespace
+}  // namespace details
 
 StackController::StackController(GameModel *model) : _model(model) {}
 
@@ -87,6 +87,6 @@ std::unique_ptr<UndoOperation> StackController::drawReserveCard(
   if (drawnCardId) {
     *drawnCardId = drawn;
   }
-  return std::unique_ptr<UndoOperation>(new ReserveDrawUndoOperation(
+  return std::unique_ptr<UndoOperation>(new details::ReserveDrawUndoOperation(
       _model, drawn, previousTrayId, LayoutConfig::reservePilePosition()));
 }

@@ -3,7 +3,7 @@
 
 bool CardManager::isOnTop(CardId id) const {
   if (!_isValidId(id)) {
-    return false;
+    return true;
   }
   auto it = _degree.find(id);
   return it->second == 0;

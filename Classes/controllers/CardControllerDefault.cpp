@@ -3,18 +3,21 @@
 #include "CCPlatformMacros.h"
 #include "configs/LayoutConfig.h"
 #include "GameController.h"
+#include "managers/CardManager.h"
 #include "models/CardModelDefault.h"
 #include "views/CardViewDefault.h"
 
 namespace details {
 
 /**
- * @brief Undo operation that restores a default card moved from playfield to tray.
+ * @brief Undo operation that restores a default card moved from playfield to
+ * tray.
  */
 class DefaultMoveUndoOperation : public UndoOperation {
   public:
   /**
-   * @brief Captures model and position state needed to undo a default-card move.
+   * @brief Captures model and position state needed to undo a default-card
+   * move.
    *
    * @param model Shared model that will be restored during undo.
    * @param cardId Runtime id of the moved card.
@@ -23,8 +26,10 @@ class DefaultMoveUndoOperation : public UndoOperation {
    */
   DefaultMoveUndoOperation(std::shared_ptr<GameModel> model, CardId cardId,
                            CardId previousTrayId,
-                           cocos2d::Vec2 const &originalPosition)
-      : _model(model),
+                           cocos2d::Vec2 const &originalPosition,
+                           GameController *gameController)
+      : _gameController(gameController),
+        _model(model),
         _cardId(cardId),
         _previousTrayId(previousTrayId),
         _originalPosition(originalPosition) {}
@@ -34,12 +39,14 @@ class DefaultMoveUndoOperation : public UndoOperation {
    */
   void undo() override {
     if (_model) {
+      _gameController->getCardManager().addCard(_cardId);
       _model->restoreCardToPlayfield(_cardId, _previousTrayId);
     }
   }
 
   /**
-   * @brief Fills animation metadata for returning the card to its original position.
+   * @brief Fills animation metadata for returning the card to its original
+   * position.
    *
    * @param animation Output animation metadata to fill.
    * @return True when animation metadata was written.
@@ -55,6 +62,8 @@ class DefaultMoveUndoOperation : public UndoOperation {
   }
 
   private:
+  GameController *_gameController;
+
   /** @brief Shared model restored by this undo operation. */
   std::shared_ptr<GameModel> _model;
 
@@ -77,9 +86,10 @@ std::unique_ptr<UndoOperation> CardControllerDefault::doCardAction(
   auto card = _model->findCard(cardId);
   cocos2d::Vec2 const originalPosition = card->getOriginalPosition();
   _model->moveCardToTray(cardId, LayoutConfig::trayPosition());
+  getGameController()->getCardManager().removeCard(cardId);
 
   return std::unique_ptr<UndoOperation>(new details::DefaultMoveUndoOperation(
-      _model, cardId, previousTrayId, originalPosition));
+      _model, cardId, previousTrayId, originalPosition, getGameController()));
 }
 
 std::shared_ptr<CardModelBase>
