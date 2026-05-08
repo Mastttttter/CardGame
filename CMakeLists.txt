@@ -58,12 +58,17 @@ list(APPEND GAME_SOURCE
      Classes/HelloWorldScene.cpp
      Classes/configs/loaders/LevelConfigLoader.cpp
      Classes/configs/loaders/CardConfigParserRegistry.cpp
+     Classes/controllers/GameController.cpp
+     Classes/models/GameModel.cpp
+     Classes/views/GameScene.cpp
+     Classes/views/GameView.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
      Classes/HelloWorldScene.h
      Classes/configs/models/CardTypes.h
-     Classes/configs/models/CardConfig.h
+     Classes/configs/models/CardConfigBase.h
+     Classes/configs/models/CardConfigDefault.h
      Classes/configs/models/CardResConfig.h
      Classes/configs/models/LevelConfig.h
      Classes/configs/loaders/LevelConfigLoader.h

@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
   log("running!");
   UnitTest::testLoad();
   // create the application instance
-  // AppDelegate app;
-  // return Application::getInstance()->run();
+  AppDelegate app;
+  return Application::getInstance()->run();
   return 0;
 }

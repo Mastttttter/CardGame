@@ -7,6 +7,5 @@
 class LevelConfigLoader {
   public:
   /** Loads a level JSON file into a LevelConfig. */
-  bool load(std::string const &path, LevelConfig *level,
-            std::string *error) const;
+  std::shared_ptr<LevelConfig> load(std::string const &path) const;
 };
