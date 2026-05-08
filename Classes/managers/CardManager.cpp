@@ -1,4 +1,5 @@
 #include "CardManager.h"
+#include "CCPlatformMacros.h"
 
 bool CardManager::isOnTop(CardId id) const {
   if (!isValidId(id)) {

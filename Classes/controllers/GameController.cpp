@@ -1,14 +1,17 @@
 #include "GameController.h"
 #include "CardControllerDefault.h"
+#include "CCPlatformMacros.h"
 #include "configs/LayoutConfig.h"
 #include "configs/loaders/LevelConfigLoader.h"
 #include "configs/models/CardResConfig.h"
 #include "configs/models/CardTypes.h"
+#include "controllers/StackController.h"
 #include "editor-support/cocosbuilder/CCControlLoader.h"
 #include "utils/GeometryUtils.h"
 
 GameController::GameController(GameView *view) : _view(view), _started(false) {
   _view->setGameController(this);
+  _model = std::make_shared<GameModel>();
 }
 
 GameController::~GameController() {}
@@ -17,6 +20,7 @@ bool GameController::start() {
   if (!_view) {
     return false;
   }
+  _stackController.reset(new StackController(_model.get()));
   registerCardController();
   CCLOG("Register Card Controller Success");
   if (!initGameModel() && _model) {
@@ -25,6 +29,7 @@ bool GameController::start() {
   }
   CCLOG("Success: initial game model");
   postInitGameModel();
+  CCLOG("Success: post initial game model");
 
   _view->setCardClickCallback(
       [this](CardId cardId) { handleCardClick(cardId); });
@@ -34,6 +39,7 @@ bool GameController::start() {
   _view->setup(_model);
   CCLOG("Success: set up views");
   _started = true;
+  refreshView();
   return true;
 }
 
@@ -59,7 +65,7 @@ std::shared_ptr<CardControllerBase> GameController::getCardControllerOfType(
     CCLOG("Fatal: could not get controller for type: %d", type);
     return nullptr;
   }
-  return _cardTypeControllers[type];
+  return controller->second;
 };
 
 bool GameController::initGameModel() {
@@ -68,7 +74,6 @@ bool GameController::initGameModel() {
   if (!level) {
     return false;
   }
-  _model = std::make_shared<GameModel>();
   int index = 0;
   for (auto cardPtr: level->playfieldCards) {
     if (_cardTypeControllers.find(cardPtr->type) ==
@@ -77,10 +82,11 @@ bool GameController::initGameModel() {
             cardPtr->type);
       return false;
     }
-    _model->addCard(
+    auto curCardId = _model->addCard(
         _cardTypeControllers[cardPtr->type]->generateCardModelFromConfig(
             cardPtr),
         CardZone::Playfield, index++);
+    _model->addPlayfieldCardId(curCardId);
   }
   for (auto cardPtr: level->stackCards) {
     if (_cardTypeControllers.find(cardPtr->type) ==
@@ -89,45 +95,107 @@ bool GameController::initGameModel() {
             cardPtr->type);
       return false;
     }
-    _model->addCard(
+    auto curCardId = _model->addCard(
         _cardTypeControllers[cardPtr->type]->generateCardModelFromConfig(
             cardPtr),
         index == level->playfieldCards.size() + level->stackCards.size() - 1
             ? CardZone::Tray
             : CardZone::Reserve,
         index);
+    auto curCard = _model->findCard(curCardId);
+    if (index == level->playfieldCards.size() + level->stackCards.size() - 1) {
+      _model->setTrayCardId(curCardId);
+      curCard->setPosition(LayoutConfig::trayPosition());
+    } else {
+      _model->addReserveCardId(curCardId);
+      curCard->setPosition(LayoutConfig::reservePilePosition());
+    }
     index++;
   }
   return true;
 }
 
 void GameController::handleReserveClick() {
-  // TODO handleReserveClck
+  if (!_started) {
+    return;
+  }
+
+  CardId drawnCardId = INVALID_CARD_ID;
+  std::unique_ptr<UndoOperation> operation =
+      _stackController->drawReserveCard(&drawnCardId);
+  if (!operation || drawnCardId == INVALID_CARD_ID) {
+    refreshView();
+    return;
+  }
+
+  _undoManager.push(std::move(operation));
+  _view->setInputEnabled(false);
+  _view->showCardAtPosition(drawnCardId, LayoutConfig::reservePilePosition());
+  _view->animateCardToPosition(drawnCardId, LayoutConfig::trayPosition(),
+                               [this]() {
+                                 _view->setInputEnabled(true);
+                                 refreshView();
+                               });
 }
 
 void GameController::handleUndoClick() {
-  // TODO  handleUndoclic
+  if (!_started) {
+    return;
+  }
+
+  UndoAnimation animation;
+  if (!_undoManager.undo(&animation)) {
+    refreshView();
+    return;
+  }
+
+  if (animation.cardId != INVALID_CARD_ID) {
+    _view->setInputEnabled(false);
+    _view->animateCardToPosition(animation.cardId, animation.targetPosition,
+                                 [this]() {
+                                   _view->setInputEnabled(true);
+                                   refreshView();
+                                 });
+    return;
+  }
+
+  refreshView();
 }
 
 void GameController::handleCardClick(CardId cardId) {
+  CCLOG("info: receive cardClick");
   if (!_started || !_model) {
     return;
   }
-  getCardControllerOfId(cardId)->handleCardClick(cardId);
 
   auto card = _model->findCard(cardId);
   if (!card) {
     return;
   }
 
-  auto controller = _cardTypeControllers.find(card->getType());
-  if (controller == _cardTypeControllers.end() || !controller->second) {
+  auto controller = getCardControllerOfId(cardId);
+  if (!controller) {
     return;
   }
+  controller->handleCardClick(cardId);
+  if (_cardManager.isOnTop(cardId) && controller->checkIfClickable(cardId)) {
+    auto operation = controller->doCardAction(cardId);
+    if (!operation) {
+      CCLOG("warning: invalid operation");
+      refreshView();
+      return;
+    }
+    CCLOG("info: create an operation");
+    _undoManager.push(std::move(operation));
 
-  controller->second->handleCardClick(cardId);
-
-  // TODO undo logic in game controller
+    _undoManager.push(std::move(operation));
+    _view->setInputEnabled(false);
+    _view->animateCardToPosition(cardId, LayoutConfig::trayPosition(),
+                                 [this]() {
+                                   _view->setInputEnabled(true);
+                                   refreshView();
+                                 });
+  }
 }
 
 void GameController::postInitGameModel() {
@@ -167,6 +235,9 @@ std::unordered_map<CardId, bool> GameController::buildClickability() {
     return clickability;
   }
   auto const &playfieldCards = _model->getPlayfieldCardIds();
+  if (playfieldCards.empty()) {
+    CCLOG("error:no playfield cards");
+  }
   for (auto &cardId: playfieldCards) {
     auto card = _model->findCard(cardId);
     if (!card || card->getZone() != CardZone::Playfield) {

@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "base/CCDirector.h"
+#include "configs/LayoutConfig.h"
 #include "configs/models/CardConfigBase.h"
 #include "configs/models/CardConfigDefault.h"
 #include "configs/models/CardTypes.h"
@@ -9,7 +10,12 @@
 /** runtime card state.*/
 class CardModelDefault : public CardModelBase {
   public:
-  CardModelDefault(std::shared_ptr<CardConfigBase> config) : Super(config) {};
+  CardModelDefault(std::shared_ptr<CardConfigBase> config) : Super(config) {
+    setOriginalPosition(cocos2d::Vec2(
+        config->position.x,
+        config->position.y + LayoutConfig::playfieldOffsetFromBottom()));
+    setPosition(getOriginalPosition());
+  };
 
   /** Returns the default-card face value. */
   int getFace() const {

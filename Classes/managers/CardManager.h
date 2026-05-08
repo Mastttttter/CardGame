@@ -20,6 +20,6 @@ class CardManager {
   private:
   bool isValidId(CardId id) const;
   std::vector<std::pair<CardId, CardId>> _connections;
-  std::vector<std::vector<CardId>> _originCardGraph;
+  std::unordered_map<CardId, std::vector<CardId>> _originCardGraph;
   std::unordered_map<CardId, int> _degree;
 };

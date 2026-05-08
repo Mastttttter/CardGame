@@ -1,10 +1,15 @@
 #pragma once
 #include "CardControllerBase.h"
+#include "CCPlatformMacros.h"
+#include "controllers/GameController.h"
+class GameModel;
 
 class CardControllerDefault : public CardControllerBase {
   public:
   explicit CardControllerDefault(GameController *controller)
-      : Super(controller) {}
+      : Super(controller) {
+    _model = controller->getGameModel();
+  }
 
   virtual std::unique_ptr<UndoOperation> doCardAction(CardId cardId) override;
 
@@ -15,4 +20,7 @@ class CardControllerDefault : public CardControllerBase {
       std::shared_ptr<CardModelBase> card) override;
 
   virtual bool checkIfClickable(CardId cardId) const override;
+
+  private:
+  std::shared_ptr<GameModel> _model;
 };

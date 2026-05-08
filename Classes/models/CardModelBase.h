@@ -59,6 +59,11 @@ class CardModelBase {
     return _originalPosition;
   }
 
+  /** Updates the origional position. */
+  void setOriginalPosition(cocos2d::Vec2 const &position) {
+    _originalPosition = position;
+  }
+
   /** Returns the current design-space center position. */
   cocos2d::Vec2 const &getPosition() const {
     return _currentPosition;

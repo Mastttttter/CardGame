@@ -5,8 +5,7 @@
 #include "cocos2d.h"
 
 /** Static card data loaded from a level config file. */
-class CardConfigDefault : public CardConfigBase {
-  public:
+struct CardConfigDefault : public CardConfigBase {
   /** Card behavior type declared by the level data. */
   CardType type = CardType::Default;
 

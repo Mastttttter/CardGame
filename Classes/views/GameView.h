@@ -27,6 +27,9 @@ class GameView : public cocos2d::Node {
                std::unordered_map<CardId, bool> const &clickability,
                bool canUndo);
 
+  /** Enables or suppresses user input forwarding. */
+  void setInputEnabled(bool enabled);
+
   /** Registers the playfield card click callback. */
   void setCardClickCallback(std::function<void(CardId)> const &callback);
 
@@ -37,6 +40,13 @@ class GameView : public cocos2d::Node {
 
   void setGameController(GameController *);
   GameController *getGameController() const;
+
+  /** Shows a card immediately at a design-space position. */
+  void showCardAtPosition(CardId cardId, cocos2d::Vec2 const &position);
+
+  /** Runs a simple move animation for a card. */
+  void animateCardToPosition(CardId cardId, cocos2d::Vec2 const &position,
+                             std::function<void()> const &completion);
 
   private:
   void createOrConfigureCardView(std::shared_ptr<CardModelBase> card);

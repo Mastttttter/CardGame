@@ -61,7 +61,9 @@ list(APPEND GAME_SOURCE
      Classes/configs/LayoutConfig.cpp
      Classes/controllers/CardControllerDefault.cpp
      Classes/controllers/GameController.cpp
+     Classes/controllers/StackController.cpp
      Classes/managers/CardManager.cpp
+     Classes/managers/UndoManager.cpp
      Classes/models/GameModel.cpp
      Classes/utils/CardAssetUtils.cpp
      Classes/utils/GeometryUtils.cpp

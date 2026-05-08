@@ -10,8 +10,8 @@ bool GameView::init() {
   }
   setContentSize(LayoutConfig::contentSize());
   cocos2d::LayerColor *background = cocos2d::LayerColor::create(
-      LayoutConfig::backgroundColor(), LayoutConfig::contentSize().height,
-      LayoutConfig::contentSize().width);
+      LayoutConfig::backgroundColor(), LayoutConfig::contentSize().width,
+      LayoutConfig::contentSize().height);
   if (background) {
     background->setPosition(cocos2d::Vec2::ZERO);
     addChild(background, -100);
@@ -140,4 +140,55 @@ void GameView::refresh(std::shared_ptr<GameModel> model,
     _undoItem->setEnabled(_inputEnabled && canUndo);
     _undoItem->setOpacity(canUndo ? 255 : 130);
   }
+}
+
+void GameView::animateCardToPosition(CardId cardId,
+                                     cocos2d::Vec2 const &position,
+                                     std::function<void()> const &completion) {
+  auto cardView = getCardView(cardId);
+  if (!cardView) {
+    if (completion) {
+      completion();
+    }
+    return;
+  }
+
+  cardView->setVisible(true);
+  cardView->setClickable(false);
+  cardView->setLocalZOrder(1000);
+  cardView->stopAllActions();
+
+  cocos2d::MoveTo *move =
+      cocos2d::MoveTo::create(LayoutConfig::cardMoveDuration(), position);
+  if (completion) {
+    cocos2d::CallFunc *done = cocos2d::CallFunc::create(completion);
+    cardView->runAction(cocos2d::Sequence::create(move, done, nullptr));
+  } else {
+    cardView->runAction(move);
+  }
+}
+
+void GameView::setInputEnabled(bool enabled) {
+  _inputEnabled = enabled;
+  if (!enabled) {
+    if (_reservePileView) {
+      _reservePileView->setClickable(false);
+    }
+    if (_undoItem) {
+      _undoItem->setEnabled(false);
+    }
+  }
+}
+
+void GameView::showCardAtPosition(CardId cardId,
+                                  cocos2d::Vec2 const &position) {
+  auto cardView = getCardView(cardId);
+  if (!cardView) {
+    return;
+  }
+
+  cardView->setVisible(true);
+  cardView->setClickable(false);
+  cardView->setPosition(position);
+  cardView->setLocalZOrder(1000);
 }

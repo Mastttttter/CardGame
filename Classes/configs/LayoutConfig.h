@@ -22,4 +22,6 @@ class LayoutConfig {
   static float cardMoveDuration();
 
   static cocos2d::Color4B backgroundColor();
+
+  static float playfieldOffsetFromBottom();
 };

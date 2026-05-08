@@ -28,3 +28,7 @@ float LayoutConfig::cardMoveDuration() {
 cocos2d::Color4B LayoutConfig::backgroundColor() {
   return cocos2d::Color4B(20, 110, 65, 255);
 }
+
+float LayoutConfig::playfieldOffsetFromBottom() {
+  return 600.f;
+}

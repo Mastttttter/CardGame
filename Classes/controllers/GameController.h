@@ -8,6 +8,7 @@
 #include "managers/CardManager.h"
 #include "managers/UndoManager.h"
 #include "models/GameModel.h"
+#include "StackController.h"
 #include "views/GameView.h"
 
 /** Wires model, views, managers, services, and card controllers. */
@@ -47,6 +48,7 @@ class GameController {
   void refreshView();
   std::unordered_map<CardId, bool> buildClickability();
   std::shared_ptr<GameModel> _model;
+  std::unique_ptr<StackController> _stackController;
   std::unordered_map<CardType, std::shared_ptr<CardControllerBase>>
       _cardTypeControllers;
   GameView *_view;

@@ -1,6 +1,7 @@
 #pragma once
 #include <cstddef>
 #include <memory>
+#include "CCPlatformMacros.h"
 #include "configs/models/CardTypes.h"
 #include "managers/UndoOperation.h"
 #include "models/CardModelBase.h"
@@ -29,7 +30,9 @@ class CardControllerBase {
     return true;
   }
 
-  virtual void handleCardClick(CardId cardId) {};
+  virtual void handleCardClick(CardId cardId) {
+    CCLOG("info: cardControllerBase receive click");
+  };
 
   GameController *getGameController() const {
     return _gameController;
@@ -37,6 +40,6 @@ class CardControllerBase {
 
   virtual CardViewBase *createCardView(std::shared_ptr<CardModelBase> card) = 0;
 
-  private:
+  protected:
   GameController *_gameController = nullptr;
 };

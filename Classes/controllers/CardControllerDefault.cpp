@@ -1,5 +1,7 @@
 #include "CardControllerDefault.h"
 #include <memory>
+#include "CCPlatformMacros.h"
+#include "configs/LayoutConfig.h"
 #include "GameController.h"
 #include "models/CardModelDefault.h"
 #include "views/CardViewDefault.h"
@@ -8,7 +10,7 @@ namespace details {
 
 class DefaultMoveUndoOperation : public UndoOperation {
   public:
-  DefaultMoveUndoOperation(GameModel *model, CardId cardId,
+  DefaultMoveUndoOperation(std::shared_ptr<GameModel> model, CardId cardId,
                            CardId previousTrayId,
                            cocos2d::Vec2 const &originalPosition)
       : _model(model),
@@ -33,7 +35,7 @@ class DefaultMoveUndoOperation : public UndoOperation {
   }
 
   private:
-  GameModel *_model;
+  std::shared_ptr<GameModel> _model;
   CardId _cardId;
   CardId _previousTrayId;
   cocos2d::Vec2 _originalPosition;
@@ -43,8 +45,14 @@ class DefaultMoveUndoOperation : public UndoOperation {
 
 std::unique_ptr<UndoOperation> CardControllerDefault::doCardAction(
     CardId cardId) {
-  // TODO do card action in default
-  return {};
+  CCLOG("info: CardControllerDefault doing action");
+  CardId const previousTrayId = _model->getTrayCardId();
+  auto card = _model->findCard(cardId);
+  cocos2d::Vec2 const originalPosition = card->getOriginalPosition();
+  _model->moveCardToTray(cardId, LayoutConfig::trayPosition());
+
+  return std::unique_ptr<UndoOperation>(new details::DefaultMoveUndoOperation(
+      _model, cardId, previousTrayId, originalPosition));
 }
 
 std::shared_ptr<CardModelBase>
