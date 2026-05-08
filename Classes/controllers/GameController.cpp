@@ -17,13 +17,26 @@ bool GameController::start() {
     return false;
   }
 
-  // TODO set click callback
-  // TODO set up card views
+  _view->setCardClickCallback(
+      [this](CardId cardId) { handleCardClick(cardId); });
+  _view->setReserveClickCallback([this]() { handleReserveClick(); });
+  _view->setUndoClickCallback([this]() { handleUndoClick(); });
+  _view->setup(_model);
   _started = true;
   return true;
 }
 
 void GameController::registerCardController() {}
+
+std::shared_ptr<CardControllerBase> GameController::getCardControllerOfId(
+    CardId id) {
+  return getCardControllerOfType(_model->findCard(id)->getType());
+};
+
+std::shared_ptr<CardControllerBase> GameController::getCardControllerOfType(
+    CardType type) {
+  return _cardTypeControllers[type];
+};
 
 bool GameController::initGameModel() {
   auto level =
@@ -62,4 +75,31 @@ bool GameController::initGameModel() {
     index++;
   }
   return true;
+}
+
+void GameController::handleReserveClick() {
+  // TODO handleReserveClck
+}
+
+void GameController::handleUndoClick() {
+  // TODO  handleUndoclic
+}
+
+void GameController::handleCardClick(CardId cardId) {
+  if (!_started || !_model) {
+    return;
+  }
+  getCardControllerOfId(cardId)->handleCardClick(cardId);
+
+  auto card = _model->findCard(cardId);
+  if (!card) {
+    return;
+  }
+
+  auto controller = _cardTypeControllers.find(card->getType());
+  if (controller == _cardTypeControllers.end() || !controller->second) {
+    return;
+  }
+
+  // TODO undo logic in game controller
 }

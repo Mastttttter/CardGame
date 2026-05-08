@@ -1,5 +1,6 @@
 #include "views/GameView.h"
 #include "configs/LayoutConfig.h"
+#include "controllers/GameController.h"
 
 bool GameView::init() {
   if (!cocos2d::Node::init()) {
@@ -31,4 +32,58 @@ bool GameView::init() {
     addChild(menu, 1100);
   }
   return true;
+}
+
+void GameView::setup(std::shared_ptr<GameModel> model) {
+  auto cards = model->getCards();
+  for (auto card: cards) {
+    createOrConfigureCardView(card);
+  }
+}
+
+void GameView::createOrConfigureCardView(std::shared_ptr<CardModelBase> card) {
+  auto cardView = getCardView(card->getId());
+  if (!cardView) {
+    cardView = getGameController()
+                   ->getCardControllerOfId(card->getId())
+                   ->createCardView(card);
+    cardView->setClickCallback([this](CardId cardId) {
+      if (_inputEnabled && _cardClickCallback) {
+        _cardClickCallback(cardId);
+      }
+    });
+    addChild(cardView);
+    _cardViews[card->getId()] = cardView;
+  }
+  cardView->configure(card);
+}
+
+CardViewBase *GameView::getCardView(CardId cardId) const {
+  auto it = _cardViews.find(cardId);
+  if (it == _cardViews.end()) {
+    return nullptr;
+  }
+
+  return it->second;
+}
+
+void GameView::setCardClickCallback(
+    std::function<void(CardId)> const &callback) {
+  _cardClickCallback = callback;
+}
+
+void GameView::setReserveClickCallback(std::function<void()> const &callback) {
+  _reserveClickCallback = callback;
+}
+
+void GameView::setUndoClickCallback(std::function<void()> const &callback) {
+  _undoClickCallback = callback;
+}
+
+GameController *GameView::setGameController(GameController *controller) {
+  _gameController = controller;
+}
+
+GameController *GameView::getGameController() const {
+  return _gameController;
 }

@@ -24,9 +24,17 @@ class GameController {
 
   void registerCardController();
 
+  std::shared_ptr<CardControllerBase> getCardControllerOfId(CardId id);
+
+  std::shared_ptr<CardControllerBase> getCardControllerOfType(CardType type);
+
   private:
+  void handleCardClick(CardId cardId);
+
+  void handleReserveClick();
+  void handleUndoClick();
   std::shared_ptr<GameModel> _model;
-  std::unordered_map<CardType, std::shared_ptr<CardControlerBase>>
+  std::unordered_map<CardType, std::shared_ptr<CardControllerBase>>
       _cardTypeControllers;
   GameView *_view;
   bool _started;
