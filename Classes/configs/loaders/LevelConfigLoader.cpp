@@ -29,8 +29,7 @@ std::vector<std::shared_ptr<CardConfigBase>> parseCardArray(
 }
 }  // namespace details
 
-std::shared_ptr<LevelConfig> LevelConfigLoader::load(
-    std::string const &path) const {
+std::shared_ptr<LevelConfig> LevelConfigLoader::load(std::string const &path) {
   cocos2d::log("loading level %s ", path.c_str());
   auto json = cocos2d::FileUtils::getInstance()->getStringFromFile(path);
   if (json.empty()) {

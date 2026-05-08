@@ -11,7 +11,7 @@ class GameModel {
   GameModel();
 
   /** Adds a card and returns its generated id. */
-  CardId addCard(std::shared_ptr<CardConfigBase> const &config, CardZone zone,
+  CardId addCard(std::shared_ptr<CardModelBase> const, CardZone zone,
                  int playfieldOrder);
 
   /** Tracks an id in original playfield order. */

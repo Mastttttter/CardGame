@@ -56,8 +56,9 @@ include_directories(
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp
      Classes/HelloWorldScene.cpp
-     Classes/configs/loaders/LevelConfigLoader.cpp
      Classes/configs/loaders/CardConfigParserRegistry.cpp
+     Classes/configs/loaders/LevelConfigLoader.cpp
+     Classes/configs/LayoutConfig.cpp
      Classes/controllers/GameController.cpp
      Classes/models/GameModel.cpp
      Classes/views/GameScene.cpp

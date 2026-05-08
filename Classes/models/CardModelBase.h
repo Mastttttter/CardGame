@@ -42,6 +42,10 @@ class CardModelBase {
     _zone = zone;
   }
 
+  void setPlayfieldOrder(int order) {
+    _playfieldOrder = order;
+  }
+
   /** Returns the original level position for this card. */
   cocos2d::Vec2 const &getOriginalPosition() const {
     return _originalPosition;

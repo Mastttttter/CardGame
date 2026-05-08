@@ -2,8 +2,10 @@
 #include <map>
 #include <memory>
 #include <unordered_map>
+#include "CardControllerBase.h"
 #include "configs/loaders/LevelConfigLoader.h"
 #include "configs/models/CardTypes.h"
+#include "models/GameModel.h"
 #include "views/GameView.h"
 
 /** Wires model, views, managers, services, and card controllers. */
@@ -18,5 +20,14 @@ class GameController {
   /** Loads the initial level and binds view callbacks. */
   bool start();
 
+  bool initGameModel();
+
+  void registerCardController();
+
   private:
+  std::shared_ptr<GameModel> _model;
+  std::unordered_map<CardType, std::shared_ptr<CardControlerBase>>
+      _cardTypeControllers;
+  GameView *_view;
+  bool _started;
 };

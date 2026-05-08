@@ -21,4 +21,8 @@ class CardResConfig {
   static std::string const getNumberFolderPath() {
     return "res/number/";
   }
+
+  static std::string const getLevelConfigPath() {
+    return "configs/level_1.json";
+  }
 };

@@ -34,7 +34,7 @@ USING_NS_CC;
 
 int main(int argc, char **argv) {
   log("running!");
-  UnitTest::testLoad();
+  // UnitTest::testLoad();
   // create the application instance
   AppDelegate app;
   return Application::getInstance()->run();

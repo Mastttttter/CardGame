@@ -15,4 +15,9 @@ class GameView : public cocos2d::Node {
   bool init() override;
 
   private:
+  cocos2d::MenuItemLabel *_undoItem = nullptr;
+  bool _inputEnabled = true;
+  std::function<void(CardId)> _cardClickCallback;
+  std::function<void()> _reserveClickCallback;
+  std::function<void()> _undoClickCallback;
 };
