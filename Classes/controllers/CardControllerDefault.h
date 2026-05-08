@@ -13,4 +13,6 @@ class CardControllerDefault : public CardControllerBase {
 
   virtual CardViewBase *createCardView(
       std::shared_ptr<CardModelBase> card) override;
+
+  virtual bool checkIfClickable(CardId cardId) const override;
 };

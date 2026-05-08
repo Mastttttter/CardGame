@@ -6,6 +6,7 @@
 #include "configs/loaders/LevelConfigLoader.h"
 #include "configs/models/CardTypes.h"
 #include "managers/CardManager.h"
+#include "managers/UndoManager.h"
 #include "models/GameModel.h"
 #include "views/GameView.h"
 
@@ -27,6 +28,10 @@ class GameController {
 
   void registerCardController();
 
+  std::shared_ptr<GameModel> getGameModel() const {
+    return _model;
+  }
+
   std::shared_ptr<CardControllerBase> getCardControllerOfId(CardId id);
 
   std::shared_ptr<CardControllerBase> getCardControllerOfType(CardType type);
@@ -37,13 +42,15 @@ class GameController {
 
   private:
   void handleCardClick(CardId cardId);
-
   void handleReserveClick();
   void handleUndoClick();
+  void refreshView();
+  std::unordered_map<CardId, bool> buildClickability();
   std::shared_ptr<GameModel> _model;
   std::unordered_map<CardType, std::shared_ptr<CardControllerBase>>
       _cardTypeControllers;
   GameView *_view;
   bool _started;
   CardManager _cardManager;
+  UndoManager _undoManager;
 };

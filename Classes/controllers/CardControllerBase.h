@@ -24,9 +24,14 @@ class CardControllerBase {
 
   virtual std::shared_ptr<CardModelBase> generateCardModelFromConfig(
       std::shared_ptr<CardConfigBase> cardConfig) = 0;
+
+  virtual bool checkIfClickable(CardId) const {
+    return true;
+  }
+
   virtual void handleCardClick(CardId cardId) {};
 
-  GameController *getGameController() {
+  GameController *getGameController() const {
     return _gameController;
   };
 

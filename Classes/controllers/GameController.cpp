@@ -152,3 +152,30 @@ void GameController::postInitGameModel() {
   _cardManager.constructGraph();
   CCLOG("Success: construct card graph");
 }
+
+void GameController::refreshView() {
+  if (!_view || !_model) {
+    return;
+  }
+
+  _view->refresh(_model, buildClickability(), _undoManager.canUndo());
+}
+
+std::unordered_map<CardId, bool> GameController::buildClickability() {
+  std::unordered_map<CardId, bool> clickability;
+  if (!_model) {
+    return clickability;
+  }
+  auto const &playfieldCards = _model->getPlayfieldCardIds();
+  for (auto &cardId: playfieldCards) {
+    auto card = _model->findCard(cardId);
+    if (!card || card->getZone() != CardZone::Playfield) {
+      clickability[cardId] = false;
+      continue;
+    }
+    clickability[cardId] =
+        getCardManager().isOnTop(cardId) &&
+        _cardTypeControllers[card->getType()]->checkIfClickable(cardId);
+  }
+  return clickability;
+}

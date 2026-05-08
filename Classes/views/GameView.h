@@ -22,6 +22,11 @@ class GameView : public cocos2d::Node {
   /** Creates card nodes for a freshly generated model. */
   void setup(std::shared_ptr<GameModel> model);
 
+  /** Synchronizes visible state from the model and clickability map. */
+  void refresh(std::shared_ptr<GameModel> model,
+               std::unordered_map<CardId, bool> const &clickability,
+               bool canUndo);
+
   /** Registers the playfield card click callback. */
   void setCardClickCallback(std::function<void(CardId)> const &callback);
 

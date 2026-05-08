@@ -101,3 +101,43 @@ GameController *GameView::getGameController() const {
   }
   return _gameController;
 }
+
+void GameView::refresh(std::shared_ptr<GameModel> model,
+                       std::unordered_map<CardId, bool> const &clickability,
+                       bool canUndo) {
+  auto const trayCardId = model->getTrayCardId();
+  auto cards = model->getCards();
+  for (auto card: cards) {
+    auto cardView = getCardView(card->getId());
+    if (!cardView) {
+      continue;
+    }
+    bool const isPlayfield = card->getZone() == CardZone::Playfield;
+    bool const isTrayTop = card->getId() == trayCardId;
+    if (isPlayfield || isTrayTop) {
+      cardView->setVisible(true);
+      cardView->setPosition(card->getPosition());
+      cardView->setLocalZOrder(isPlayfield ? 10 + card->getPlayfieldOrder()
+                                           : 1000);
+    } else {
+      cardView->setVisible(false);
+    }
+    bool clickable = false;
+    auto clickableIt = clickability.find(card->getId());
+    if (clickableIt != clickability.end()) {
+      clickable = clickableIt->second;
+    }
+    cardView->setClickable(_inputEnabled && isPlayfield && clickable);
+  }
+
+  if (_reservePileView) {
+    _reservePileView->setCount(model->getReserveCount());
+    _reservePileView->setClickable(_inputEnabled &&
+                                   model->getReserveCount() > 0);
+  }
+
+  if (_undoItem) {
+    _undoItem->setEnabled(_inputEnabled && canUndo);
+    _undoItem->setOpacity(canUndo ? 255 : 130);
+  }
+}
