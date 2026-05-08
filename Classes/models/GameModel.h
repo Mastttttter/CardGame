@@ -58,6 +58,7 @@ class GameModel {
                                 cocos2d::Vec2 const &reservePosition);
 
   private:
+  std::unordered_map<CardId, std::shared_ptr<CardModelBase>> _cardsMap;
   std::vector<std::shared_ptr<CardModelBase>> _cards;
   std::vector<CardId> _playfieldCardIds;
   std::vector<CardId> _reserveCardIds;

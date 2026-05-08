@@ -12,6 +12,7 @@ CardId GameModel::addCard(std::shared_ptr<CardModelBase> cardModel,
   cardModel->setZone(zone);
   cardModel->setPlayfieldOrder(playfieldOrder);
   _cards.push_back(cardModel);
+  _cardsMap.insert(std::make_pair(cardId, cardModel));
   return cardId;
 }
 
@@ -52,12 +53,11 @@ std::vector<CardId> const &GameModel::getReserveCardIds() const {
 }
 
 std::shared_ptr<CardModelBase> GameModel::findCard(CardId cardId) {
-  for (auto &card: _cards) {
-    if (card->getId() == cardId) {
-      return card;
-    }
+  auto it = _cardsMap.find(cardId);
+  if (it == _cardsMap.end()) {
+    return nullptr;
   }
-  return nullptr;
+  return it->second;
 }
 
 void GameModel::moveCardToTray(CardId cardId,
@@ -75,8 +75,8 @@ CardId GameModel::drawReserveCardToTray(cocos2d::Vec2 const &trayPosition) {
   if (_reserveCardIds.empty()) {
     return INVALID_CARD_ID;
   }
-  CardId const cardId = _reserveCardIds.front();
-  _reserveCardIds.erase(_reserveCardIds.begin());
+  CardId const cardId = _reserveCardIds.back();
+  _reserveCardIds.pop_back();
   auto card = findCard(cardId);
   if (!card) {
     return INVALID_CARD_ID;
