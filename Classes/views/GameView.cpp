@@ -48,12 +48,12 @@ bool GameView::init() {
 void GameView::setup(std::shared_ptr<GameModel> model) {
   auto cards = model->getCards();
   for (auto card: cards) {
-    createOrConfigureCardView(card);
+    _createOrConfigureCardView(card);
   }
 }
 
-void GameView::createOrConfigureCardView(std::shared_ptr<CardModelBase> card) {
-  auto cardView = getCardView(card->getId());
+void GameView::_createOrConfigureCardView(std::shared_ptr<CardModelBase> card) {
+  auto cardView = _getCardView(card->getId());
   if (!cardView) {
     cardView = getGameController()
                    ->getCardControllerOfId(card->getId())
@@ -69,7 +69,7 @@ void GameView::createOrConfigureCardView(std::shared_ptr<CardModelBase> card) {
   cardView->configure(card);
 }
 
-CardViewBase *GameView::getCardView(CardId cardId) const {
+CardViewBase *GameView::_getCardView(CardId cardId) const {
   auto it = _cardViews.find(cardId);
   if (it == _cardViews.end()) {
     return nullptr;
@@ -108,7 +108,7 @@ void GameView::refresh(std::shared_ptr<GameModel> model,
   auto const trayCardId = model->getTrayCardId();
   auto cards = model->getCards();
   for (auto card: cards) {
-    auto cardView = getCardView(card->getId());
+    auto cardView = _getCardView(card->getId());
     if (!cardView) {
       continue;
     }
@@ -145,7 +145,7 @@ void GameView::refresh(std::shared_ptr<GameModel> model,
 void GameView::animateCardToPosition(CardId cardId,
                                      cocos2d::Vec2 const &position,
                                      std::function<void()> const &completion) {
-  auto cardView = getCardView(cardId);
+  auto cardView = _getCardView(cardId);
   if (!cardView) {
     if (completion) {
       completion();
@@ -182,7 +182,7 @@ void GameView::setInputEnabled(bool enabled) {
 
 void GameView::showCardAtPosition(CardId cardId,
                                   cocos2d::Vec2 const &position) {
-  auto cardView = getCardView(cardId);
+  auto cardView = _getCardView(cardId);
   if (!cardView) {
     return;
   }

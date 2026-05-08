@@ -5,8 +5,19 @@
 #include "configs/loaders/CardConfigParserRegistry.h"
 #include "json/document.h"
 
-// the helper fundtions used by this .cpp file, no recommand for other usage
+/**
+ * @brief Helper functions used only by this level loader implementation.
+ */
 namespace details {
+/**
+ * @brief Parses a named card array from a level JSON document.
+ *
+ * @param root Root level JSON object.
+ * @param key Name of the array member to parse.
+ * @param playfield Whether cards should receive playfield ordering values.
+ * @param registry Parser registry used to create card configurations.
+ * @return Parsed card configuration list, or an empty list when validation fails.
+ */
 std::vector<std::shared_ptr<CardConfigBase>> parseCardArray(
     rapidjson::Value const &root, char const *key, bool playfield,
     CardConfigParserRegistry const &registry) {

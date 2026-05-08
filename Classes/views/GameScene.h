@@ -6,25 +6,46 @@
 class GameController;
 class GameView;
 
-/** Scene entry point used by AppDelegate to start the card game. */
+/**
+ * @brief Scene entry point used by AppDelegate to start the card game.
+ */
 class GameScene : public cocos2d::Scene {
   public:
-  /** Creates the initial game scene. */
+  /**
+   * @brief Creates the initial game scene.
+   *
+   * @return Autoreleased Cocos scene pointer.
+   */
   static cocos2d::Scene *createScene();
 
-  /** Creates an empty scene instance. */
+  /**
+   * @brief Creates an empty scene instance before Cocos initialization.
+   */
   GameScene();
 
-  /** Destroys controller-owned game state. */
+  /**
+   * @brief Destroys controller-owned game state.
+   */
   ~GameScene() override;
 
-  /** Initializes the scene, view, and controller. */
+  /**
+   * @brief Initializes the scene, view, and controller.
+   *
+   * @return True when the Cocos scene initializes successfully.
+   */
   bool init() override;
 
-  /** Creates a Cocos autoreleased GameScene. */
+  /**
+   * @brief Creates an autoreleased GameScene instance.
+   *
+   * @return Autoreleased GameScene pointer, or nullptr when initialization fails.
+   */
   CREATE_FUNC(GameScene);
 
   private:
+  /** @brief Root game view node owned by the scene graph. */
   GameView *_gameView;
+
+  /** @brief Game controller owned by the scene. */
   std::unique_ptr<GameController> _controller;
 };

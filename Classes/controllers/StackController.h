@@ -6,15 +6,27 @@
 
 class GameModel;
 
-/** Coordinates reserve/spare-pile draw actions. */
+/**
+ * @brief Coordinates reserve-pile draw actions against the runtime model.
+ */
 class StackController {
   public:
-  /** Creates a stack controller over the runtime model. */
+  /**
+   * @brief Creates a stack controller over the runtime model.
+   *
+   * @param model Non-owning model pointer that stores reserve and tray state.
+   */
   explicit StackController(GameModel *model);
 
-  /** Draws the next reserve card and returns undo data on success. */
+  /**
+   * @brief Draws the next reserve card and captures undo state.
+   *
+   * @param drawnCardId Optional output pointer that receives the drawn card id.
+   * @return Undo operation for the draw, or nullptr when no card is drawn.
+   */
   std::unique_ptr<UndoOperation> drawReserveCard(CardId *drawnCardId);
 
   private:
+  /** @brief Non-owning runtime model pointer used for reserve mutations. */
   GameModel *_model;
 };

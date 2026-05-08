@@ -2,7 +2,7 @@
 #include "CCPlatformMacros.h"
 
 bool CardManager::isOnTop(CardId id) const {
-  if (!isValidId(id)) {
+  if (!_isValidId(id)) {
     return false;
   }
   auto it = _degree.find(id);
@@ -23,7 +23,7 @@ void CardManager::constructGraph() {
 }
 
 void CardManager::removeCard(CardId id) {
-  if (!isValidId(id)) {
+  if (!_isValidId(id)) {
     return;
   }
   for (auto &v: _originCardGraph[id]) {
@@ -32,7 +32,7 @@ void CardManager::removeCard(CardId id) {
 }
 
 void CardManager::addCard(CardId id) {
-  if (!isValidId(id)) {
+  if (!_isValidId(id)) {
     return;
   }
   for (auto &v: _originCardGraph[id]) {
@@ -40,7 +40,7 @@ void CardManager::addCard(CardId id) {
   }
 }
 
-bool CardManager::isValidId(CardId id) const {
+bool CardManager::_isValidId(CardId id) const {
   if (_degree.find(id) == _degree.end()) {
     CCLOG("Warning: try to detect a invalid CardId if on top:%d", id);
     return false;

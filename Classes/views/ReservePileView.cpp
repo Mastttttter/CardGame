@@ -29,7 +29,7 @@ bool ReservePileView::init() {
     _countLabel->setPosition(cocos2d::Vec2(0.0f, -24.0f));
     addChild(_countLabel);
   }
-  addTouchListener();
+  _addTouchListener();
   return true;
 }
 
@@ -51,7 +51,7 @@ void ReservePileView::setClickCallback(std::function<void()> const &callback) {
   _clickCallback = callback;
 }
 
-bool ReservePileView::containsTouch(cocos2d::Touch *touch) const {
+bool ReservePileView::_containsTouch(cocos2d::Touch *touch) const {
   cocos2d::Vec2 const local = convertToNodeSpace(touch->getLocation());
   cocos2d::Size const size = LayoutConfig::cardSize();
   cocos2d::Rect const rect(-size.width * 0.5f, -size.height * 0.5f, size.width,
@@ -59,17 +59,17 @@ bool ReservePileView::containsTouch(cocos2d::Touch *touch) const {
   return rect.containsPoint(local);
 }
 
-void ReservePileView::addTouchListener() {
+void ReservePileView::_addTouchListener() {
   cocos2d::EventListenerTouchOneByOne *listener =
       cocos2d::EventListenerTouchOneByOne::create();
   listener->setSwallowTouches(true);
   listener->onTouchBegan = [this](cocos2d::Touch *touch,
                                   cocos2d::Event *event) {
-    return _clickable && _count > 0 && containsTouch(touch);
+    return _clickable && _count > 0 && _containsTouch(touch);
   };
   listener->onTouchEnded = [this](cocos2d::Touch *touch,
                                   cocos2d::Event *event) {
-    if (_clickable && _count > 0 && _clickCallback && containsTouch(touch)) {
+    if (_clickable && _count > 0 && _clickCallback && _containsTouch(touch)) {
       _clickCallback();
     }
   };

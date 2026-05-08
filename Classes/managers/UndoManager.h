@@ -3,21 +3,39 @@
 #include <vector>
 #include "managers/UndoOperation.h"
 
-/** Controller-owned LIFO storage for undo operations. */
+/**
+ * @brief Controller-owned LIFO storage for undo operations.
+ */
 class UndoManager {
   public:
-  /** Pushes an undo operation when it is non-null. */
+  /**
+   * @brief Pushes an undo operation when it is non-null.
+   *
+   * @param operation Operation to take ownership of.
+   */
   void push(std::unique_ptr<UndoOperation> operation);
 
-  /** Runs and removes the latest undo operation. */
+  /**
+   * @brief Runs and removes the latest undo operation.
+   *
+   * @param animation Optional output animation metadata for the restored state.
+   * @return True when an operation was undone.
+   */
   bool undo(UndoAnimation *animation);
 
-  /** Returns whether an undo operation is available. */
+  /**
+   * @brief Returns whether an undo operation is available.
+   *
+   * @return True when the undo stack is not empty.
+   */
   bool canUndo() const;
 
-  /** Removes all stored undo operations. */
+  /**
+   * @brief Removes all stored undo operations.
+   */
   void clear();
 
   private:
+  /** @brief Owned undo operations in execution order, newest at the back. */
   std::vector<std::unique_ptr<UndoOperation>> _operations;
 };

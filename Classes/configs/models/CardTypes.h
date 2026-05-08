@@ -1,20 +1,33 @@
 #pragma once
 
-/** Runtime and config card behavior types. */
+/**
+ * @brief Runtime and configuration card behavior types.
+ */
 enum class CardType {
+  /** @brief Standard playing-card behavior. */
   Default
 };
 
-/** Runtime location for a card model. */
+/**
+ * @brief Runtime location for a card model.
+ */
 enum class CardZone {
+  /** @brief Card is still visible in the playfield. */
   Playfield,
+  /** @brief Card is currently the tray/top card. */
   Tray,
+  /** @brief Card is waiting in the reserve pile. */
   Reserve,
+  /** @brief Card has been removed from active play. */
   Removed
 };
 
-/** Stable runtime card identifier. */
+/**
+ * @brief Stable runtime card identifier.
+ */
 using CardId = int;
 
-/** Invalid card identifier sentinel. */
+/**
+ * @brief Sentinel value used when no valid card identifier is available.
+ */
 static CardId const INVALID_CARD_ID = -1;

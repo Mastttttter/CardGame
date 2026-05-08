@@ -6,20 +6,43 @@
 #include "configs/models/CardConfigBase.h"
 #include "json/document.h"
 
-/** Registry for card-type JSON parsers used by level loading*/
+/**
+ * @brief Registry of JSON parsers used to build card configuration objects.
+ */
 class CardConfigParserRegistry {
   public:
-  /** Parser finction for one card JSON object */
+  /**
+   * @brief Parser callback for one card JSON object.
+   *
+   * @param value JSON value that describes a card.
+   * @return Parsed card configuration, or nullptr when validation fails.
+   */
   using ParserType =
       std::function<std::shared_ptr<CardConfigBase>(rapidjson::Value const &)>;
-  /** Creates a registry with the default-card parser installed */
+
+  /**
+   * @brief Creates a registry with the default-card parser installed.
+   */
   CardConfigParserRegistry();
-  /** Registry a parser for a card type name*/
+
+  /**
+   * @brief Registers a parser for a card type name.
+   *
+   * @param typeName Type name read from level JSON data.
+   * @param parser Parser callback used for that type.
+   */
   void registerParser(std::string const &typeName, ParserType const &parser);
-  /** Parses on card object, treating missing types as default*/
+
+  /**
+   * @brief Parses one card object, treating missing type names as default cards.
+   *
+   * @param value JSON value that describes a card.
+   * @return Parsed card configuration, or nullptr when no parser can handle it.
+   */
   std::shared_ptr<CardConfigBase> parseCard(
       rapidjson::Value const &value) const;
 
   private:
+  /** @brief Parser callbacks keyed by card type name. */
   std::unordered_map<std::string, ParserType> _parsers;
 };

@@ -8,8 +8,19 @@
 
 namespace details {
 
+/**
+ * @brief Undo operation that restores a default card moved from playfield to tray.
+ */
 class DefaultMoveUndoOperation : public UndoOperation {
   public:
+  /**
+   * @brief Captures model and position state needed to undo a default-card move.
+   *
+   * @param model Shared model that will be restored during undo.
+   * @param cardId Runtime id of the moved card.
+   * @param previousTrayId Tray card id captured before the move.
+   * @param originalPosition Position used for the undo animation target.
+   */
   DefaultMoveUndoOperation(std::shared_ptr<GameModel> model, CardId cardId,
                            CardId previousTrayId,
                            cocos2d::Vec2 const &originalPosition)
@@ -18,12 +29,21 @@ class DefaultMoveUndoOperation : public UndoOperation {
         _previousTrayId(previousTrayId),
         _originalPosition(originalPosition) {}
 
+  /**
+   * @brief Restores the moved card to playfield state.
+   */
   void undo() override {
     if (_model) {
       _model->restoreCardToPlayfield(_cardId, _previousTrayId);
     }
   }
 
+  /**
+   * @brief Fills animation metadata for returning the card to its original position.
+   *
+   * @param animation Output animation metadata to fill.
+   * @return True when animation metadata was written.
+   */
   bool getUndoAnimation(UndoAnimation *animation) const override {
     if (!animation) {
       return false;
@@ -35,9 +55,16 @@ class DefaultMoveUndoOperation : public UndoOperation {
   }
 
   private:
+  /** @brief Shared model restored by this undo operation. */
   std::shared_ptr<GameModel> _model;
+
+  /** @brief Runtime id of the card moved to the tray. */
   CardId _cardId;
+
+  /** @brief Tray card id captured before the move. */
   CardId _previousTrayId;
+
+  /** @brief Original playfield position used by the undo animation. */
   cocos2d::Vec2 _originalPosition;
 };
 

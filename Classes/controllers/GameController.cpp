@@ -32,14 +32,14 @@ bool GameController::start() {
   CCLOG("Success: post initial game model");
 
   _view->setCardClickCallback(
-      [this](CardId cardId) { handleCardClick(cardId); });
-  _view->setReserveClickCallback([this]() { handleReserveClick(); });
-  _view->setUndoClickCallback([this]() { handleUndoClick(); });
+      [this](CardId cardId) { _handleCardClick(cardId); });
+  _view->setReserveClickCallback([this]() { _handleReserveClickk(); });
+  _view->setUndoClickCallback([this]() { _handleUndoClick(); });
   CCLOG("Success: set up call backs");
   _view->setup(_model);
   CCLOG("Success: set up views");
   _started = true;
-  refreshView();
+  _refreshView();
   return true;
 }
 
@@ -115,7 +115,7 @@ bool GameController::initGameModel() {
   return true;
 }
 
-void GameController::handleReserveClick() {
+void GameController::_handleReserveClickk() {
   if (!_started) {
     return;
   }
@@ -124,7 +124,7 @@ void GameController::handleReserveClick() {
   std::unique_ptr<UndoOperation> operation =
       _stackController->drawReserveCard(&drawnCardId);
   if (!operation || drawnCardId == INVALID_CARD_ID) {
-    refreshView();
+    _refreshView();
     return;
   }
 
@@ -134,18 +134,18 @@ void GameController::handleReserveClick() {
   _view->animateCardToPosition(drawnCardId, LayoutConfig::trayPosition(),
                                [this]() {
                                  _view->setInputEnabled(true);
-                                 refreshView();
+                                 _refreshView();
                                });
 }
 
-void GameController::handleUndoClick() {
+void GameController::_handleUndoClick() {
   if (!_started) {
     return;
   }
 
   UndoAnimation animation;
   if (!_undoManager.undo(&animation)) {
-    refreshView();
+    _refreshView();
     return;
   }
 
@@ -154,15 +154,15 @@ void GameController::handleUndoClick() {
     _view->animateCardToPosition(animation.cardId, animation.targetPosition,
                                  [this]() {
                                    _view->setInputEnabled(true);
-                                   refreshView();
+                                   _refreshView();
                                  });
     return;
   }
 
-  refreshView();
+  _refreshView();
 }
 
-void GameController::handleCardClick(CardId cardId) {
+void GameController::_handleCardClick(CardId cardId) {
   CCLOG("info: receive cardClick");
   if (!_started || !_model) {
     return;
@@ -177,12 +177,12 @@ void GameController::handleCardClick(CardId cardId) {
   if (!controller) {
     return;
   }
-  controller->handleCardClick(cardId);
+  controller->_handleCardClick(cardId);
   if (_cardManager.isOnTop(cardId) && controller->checkIfClickable(cardId)) {
     auto operation = controller->doCardAction(cardId);
     if (!operation) {
       CCLOG("warning: invalid operation");
-      refreshView();
+      _refreshView();
       return;
     }
     CCLOG("info: create an operation");
@@ -193,7 +193,7 @@ void GameController::handleCardClick(CardId cardId) {
     _view->animateCardToPosition(cardId, LayoutConfig::trayPosition(),
                                  [this]() {
                                    _view->setInputEnabled(true);
-                                   refreshView();
+                                   _refreshView();
                                  });
   }
 }
@@ -221,15 +221,15 @@ void GameController::postInitGameModel() {
   CCLOG("Success: construct card graph");
 }
 
-void GameController::refreshView() {
+void GameController::_refreshView() {
   if (!_view || !_model) {
     return;
   }
 
-  _view->refresh(_model, buildClickability(), _undoManager.canUndo());
+  _view->refresh(_model, _buildClickability(), _undoManager.canUndo());
 }
 
-std::unordered_map<CardId, bool> GameController::buildClickability() {
+std::unordered_map<CardId, bool> GameController::_buildClickability() {
   std::unordered_map<CardId, bool> clickability;
   if (!_model) {
     return clickability;
